@@ -1,25 +1,40 @@
-const checkTeamTypes = (request, response, next) => {
-    const team = request.body;
+const { body, validationResult } = require("express-validator");
 
-    const arrayOfValidation = [];
+const checkTeamTypes = [
+    body("name")
+        .isString()
+        .withMessage("name debe ser un string."),
 
-    if (typeof team.name !== "string") arrayOfValidation.push("name debe ser un string.");
-    if (typeof team.location !== "string") arrayOfValidation.push("location debe ser un string.");
-    if (!Array.isArray(team.competitions)) arrayOfValidation.push("competitions debe ser un array.");
-    if (typeof team.stadium !== "string") arrayOfValidation.push("stadium must debe ser un string.");
-    if (typeof team.established !== "number") arrayOfValidation.push("established debe ser un number.");
+    body("location")
+        .isString()
+        .withMessage("location debe ser un string."),
 
-    
-    if(arrayOfValidation.length > 0){
-        return response.json({
-            statuscode: 400,
-            massage: "Error en los campos ingresados: ",
-            arrayOfValidation
-        })
+    body("competitions")
+        .isArray()
+        .withMessage("competitions debe ser un array."),
+
+    body("stadium")
+        .isString()
+        .withMessage("stadium debe ser un string."),
+
+    body("established")
+        .isNumeric()
+        .withMessage("established debe ser un number."),
+
+
+    (req, res, next) => {
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                statuscode: 400,
+                massage: "Error en los campos ingresados:",
+                arrayOfValidation: errors.array().map(err => err.msg)
+            });
+        }
+
+        next();
     }
-
-    next();
-}
-
+];
 
 module.exports = checkTeamTypes;
