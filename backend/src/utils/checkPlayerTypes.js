@@ -17,7 +17,7 @@ const checkPlayerTypes = [
         .isString()
         .withMessage("gender debe ser un string.")
         .isIn(validGenders)
-        .withMessage("gender debe ser 'M' or 'F'."),
+        .withMessage("gender debe ser 'M' o 'F'."),
 
     body("nationality")
         .isString()
@@ -33,7 +33,7 @@ const checkPlayerTypes = [
         .isString()
         .withMessage("status debe ser un string.")
         .isIn(validStatuses)
-        .withMessage("status debe ser 'Activo', 'Lesionado' or 'Retirado'."),
+        .withMessage("status debe ser 'Activo', 'Lesionado' o 'Retirado'."),
 
     body("club")
         .isString()
