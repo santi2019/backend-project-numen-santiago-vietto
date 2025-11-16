@@ -1,27 +1,47 @@
-const checkCoachTypes = (request, response, next) => {
-    const coach = request.body;
+const { body, validationResult } = require("express-validator");
 
-    const arrayOfValidation = [];
+const checkCoachTypes = [
+    body("firstName")
+        .isString()
+        .withMessage("firstName debe ser un string."),
 
-    if (typeof coach.firstName !== "string") arrayOfValidation.push("firstName debe ser un string.");
-    if (typeof coach.lastName !== "string") arrayOfValidation.push("lastName debe ser un string.");
-    if (typeof coach.nationality !== "string") arrayOfValidation.push("nationality debe ser unstring.");
-    if (typeof coach.age !== "number") arrayOfValidation.push("age debe ser un number.");
-    if (!coach.birthDate || isNaN(Date.parse(coach.birthDate))) arrayOfValidation.push("El formato de birthDate debe ser YYYY-MM-DD.");
-    if (typeof coach.totalTitles !== "number") arrayOfValidation.push("totalTitles debe ser un number.");
-    if (typeof coach.currentClub !== "string") arrayOfValidation.push("currentClub debe ser un string.");
+    body("lastName")
+        .isString()
+        .withMessage("lastName debe ser un string."),
 
-    
-    if(arrayOfValidation.length > 0){
-        return response.json({
-            statuscode: 400,
-            massage: "Error en los campos ingresados: ",
-            arrayOfValidation
-        })
+    body("nationality")
+        .isString()
+        .withMessage("nationality debe ser un string."),
+
+    body("age")
+        .isNumeric()
+        .withMessage("age debe ser un number."),
+
+    body("birthDate")
+        .isDate({ format: "YYYY-MM-DD", strictMode: true })
+        .withMessage("El formato de birthDate debe ser YYYY-MM-DD."),
+
+    body("totalTitles")
+        .isNumeric()
+        .withMessage("totalTitles debe ser un number."),
+        
+    body("currentClub")
+        .isString()
+        .withMessage("currentClub debe ser un string."),
+
+    (req, res, next) => {
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                statuscode: 400,
+                massage: "Error en los campos ingresados:",
+                arrayOfValidation: errors.array().map(err => err.msg)
+            });
+        }
+
+        next();
     }
-
-    next();
-}
-
+];
 
 module.exports = checkCoachTypes;
